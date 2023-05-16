@@ -7,7 +7,7 @@ Drag and drop
 
 ## Commands
 - /mytime - to show your play time on server
-- /timelist - show leaderboard of all players sorted by highest to lovest
+- /timelist - show leaderboard of all players sorted by highest to lowest
 
 ## Dependency
 - qb/esx
