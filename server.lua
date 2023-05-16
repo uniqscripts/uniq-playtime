@@ -171,7 +171,6 @@ end)
 
 AddEventHandler('playerDropped', function(reason)
     local playerId = source
-    local identifier = QBCore.Functions.GetPlayer(playerId).PlayerData.citizenid
     
     if framework == 'esx' then
         local identifier = ESX.GetPlayerFromId(playerId).identifier
