@@ -196,7 +196,7 @@ AddEventHandler('playerDropped', function(reason)
                 if cfg.print then
                     print(Locales[4]:format(GetPlayerName(playerId), new_time))
                 end
-                MySQL.update(Query.UPDATE_TIME, {identifier, new_time})
+                MySQL.update(Query.UPDATE_TIME, {new_time, identifier})
                 playTime[identifier] = nil
             end
         end
@@ -211,7 +211,7 @@ AddEventHandler('playerDropped', function(reason)
                 if cfg.print then
                     print(Locales[4]:format(GetPlayerName(playerId), new_time))
                 end
-                MySQL.update(Query.UPDATE_TIME, {identifier, new_time})
+                MySQL.update(Query.UPDATE_TIME, {new_time, identifier})
                 playTime[identifier] = nil
             end
         end
