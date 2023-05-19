@@ -8,6 +8,7 @@ Drag and drop
 ## Commands
 - /mytime - to show your play time on server
 - /timelist - show leaderboard of all players sorted by highest to lowest
+- you can edit in config file command namesgit 
 
 ## Dependency
 - qb/esx
