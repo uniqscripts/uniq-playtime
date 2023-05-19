@@ -130,11 +130,14 @@ RegisterCommand(cfg.commands.timelist, function(source)
                 playtime = time
             }
         end
+<<<<<<< HEAD
 
         table.sort(options, function(a, b)
             return a.playtime > b.playtime
         end)
 
+=======
+>>>>>>> a5a4cb2012be9fea3c0009bdae030f33f9945846
         TriggerClientEvent('uniq-playtime:list', source, options)
     elseif framework == 'qb' then
         local options = {}
@@ -157,11 +160,14 @@ RegisterCommand(cfg.commands.timelist, function(source)
                 playtime = time
             }
         end
+<<<<<<< HEAD
 
         table.sort(options, function(a, b)
             return a.playtime > b.playtime
         end)
 
+=======
+>>>>>>> a5a4cb2012be9fea3c0009bdae030f33f9945846
         TriggerClientEvent('uniq-playtime:list', source, options)
     end
 end)
@@ -185,8 +191,11 @@ end)
 
 AddEventHandler('playerDropped', function(reason)
     local playerId = source
+<<<<<<< HEAD
     if not playerId then return end
     local identifier = QBCore.Functions.GetPlayer(playerId).PlayerData.citizenid
+=======
+>>>>>>> a5a4cb2012be9fea3c0009bdae030f33f9945846
     
     if framework == 'esx' then
         local identifier = ESX.GetPlayerFromId(playerId).identifier
