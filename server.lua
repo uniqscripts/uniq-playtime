@@ -125,8 +125,8 @@ RegisterCommand('timelist', function(source)
                 name = ('%s %s'):format(data.firstname, data.lastname),
                 playtime = time
             }
-            TriggerClientEvent('uniq-playtime:list', source, options)
         end
+        TriggerClientEvent('uniq-playtime:list', source, options)
     elseif framework == 'qb' then
         local options = {}
         local data = MySQL.query.await(Query.FETCH_TIMEQB)
@@ -147,8 +147,8 @@ RegisterCommand('timelist', function(source)
                 name = name,
                 playtime = time
             }
-            TriggerClientEvent('uniq-playtime:list', source, options)
         end
+        TriggerClientEvent('uniq-playtime:list', source, options)
     end
 end)
 
