@@ -9,6 +9,8 @@ local Query = {
     INSERT = [[ALTER TABLE {userTable} ADD playTime INT(255) DEFAULT 0;]]
 }
 local ESX, QBCore
+local cfg = Shared
+local Locales = cfg.Locales
 
 do
     if GetResourceState('es_extended'):find('start') then 
@@ -81,11 +83,13 @@ CreateThread(function()
     
     if not success then
         MySQL.query(Query.INSERT)
-        print(('^5Adding %s column to %s table^0'):format('playTime', userTable))
+        if cfg.print then
+            print(('^5Adding %s column to %s table^0'):format('playTime', userTable))
+        end
     end
 end)
 
-RegisterCommand('mytime', function(source)
+RegisterCommand(cfg.commands.mytime, function(source)
     if source == 0 then return end
 
     if framework == 'esx' then
@@ -106,7 +110,7 @@ RegisterCommand('mytime', function(source)
 end)
 
 
-RegisterCommand('timelist', function(source)
+RegisterCommand(cfg.commands.timelist, function(source)
     if framework == 'esx' then
         local options = {}
         local time = MySQL.query.await(Query.FETCH_TIMEESX)
@@ -125,8 +129,13 @@ RegisterCommand('timelist', function(source)
                 name = ('%s %s'):format(data.firstname, data.lastname),
                 playtime = time
             }
-            TriggerClientEvent('uniq-playtime:list', source, options)
         end
+
+        table.sort(options, function(a, b)
+            return a.playtime > b.playtime
+        end)
+
+        TriggerClientEvent('uniq-playtime:list', source, options)
     elseif framework == 'qb' then
         local options = {}
         local data = MySQL.query.await(Query.FETCH_TIMEQB)
@@ -147,8 +156,13 @@ RegisterCommand('timelist', function(source)
                 name = name,
                 playtime = time
             }
-            TriggerClientEvent('uniq-playtime:list', source, options)
         end
+
+        table.sort(options, function(a, b)
+            return a.playtime > b.playtime
+        end)
+
+        TriggerClientEvent('uniq-playtime:list', source, options)
     end
 end)
 
@@ -171,6 +185,7 @@ end)
 
 AddEventHandler('playerDropped', function(reason)
     local playerId = source
+    if not playerId then return end
     local identifier = QBCore.Functions.GetPlayer(playerId).PlayerData.citizenid
     
     if framework == 'esx' then
@@ -179,18 +194,24 @@ AddEventHandler('playerDropped', function(reason)
         if identifier then
             if playTime[identifier] then
                 local new_time = os.time() - playTime[identifier]
-                print(('%s played on server for %.2f sec'):format(GetPlayerName(playerId), new_time))
+                if cfg.print then
+                    print(Locales[4]:format(GetPlayerName(playerId), new_time))
+                end
                 MySQL.update(Query.UPDATE_TIME, {identifier, new_time})
                 playTime[identifier] = nil
             end
         end
-    elseif framework == 'qb' then
+    end
+    
+    if framework == 'qb' then
         local identifier = QBCore.Functions.GetPlayer(playerId).PlayerData.citizenid
   
         if identifier then
             if playTime[identifier] then
                 local new_time = os.time() - playTime[identifier]
-                print(('%s played on server for %.2f sec'):format(GetPlayerName(playerId), new_time))
+                if cfg.print then
+                    print(Locales[4]:format(GetPlayerName(playerId), new_time))
+                end
                 MySQL.update(Query.UPDATE_TIME, {identifier, new_time})
                 playTime[identifier] = nil
             end

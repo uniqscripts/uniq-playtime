@@ -7,6 +7,7 @@ author 'uniq-team'
 version '1.0'
 
 shared_script '@ox_lib/init.lua'
+shared_script 'config.lua'
 server_script '@oxmysql/lib/MySQL.lua'
 server_script 'server.lua'
 client_script 'client.lua'
