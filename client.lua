@@ -3,16 +3,17 @@ local Locales = cfg.Locales
 
 -- https://github.com/esx-framework/esx_ambulancejob/blob/main/client/main.lua#L200
 local function secondsToClock(seconds)
-    local seconds, hours, mins, secs = tonumber(seconds), 0, 0, 0
+    local seconds, days, hours, mins, secs = tonumber(seconds), 0, 0, 0, 0
   
     if seconds <= 0 then
       return 0, 0
     else
-      local hours = string.format('%02.f', math.floor(seconds / 3600))
-      local mins = string.format('%02.f', math.floor(seconds / 60 - (hours * 60)))
-      local secs = string.format('%02.f', math.floor(seconds - hours * 3600 - mins * 60))
-  
-      return mins, secs
+        local days = math.floor(seconds / 86400)
+        local hours = math.floor(seconds / 3600) % 24
+        local mins = math.floor(seconds / 60) % 60
+        local secs = seconds % 60
+
+        return days, hours, mins, secs
     end
 end
   
@@ -42,6 +43,7 @@ RegisterNetEvent('uniq-playtime:list', function(list)
         menu.options[i] = {
             title = data.name,
             description = Locales[2]:format(secondsToClock(data.playtime)),
+            time = data.playtime
         }
         count += 1
 
@@ -51,7 +53,7 @@ RegisterNetEvent('uniq-playtime:list', function(list)
     end
 
     table.sort(menu.options, function(a, b)
-        return a.description > b.description
+        return a.time > b.time
     end)
 
     lib.registerContext(menu)
