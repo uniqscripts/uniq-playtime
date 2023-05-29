@@ -6,7 +6,7 @@ local function secondsToClock(seconds)
     local seconds, days, hours, mins, secs = tonumber(seconds), 0, 0, 0, 0
   
     if seconds <= 0 then
-      return 0, 0
+      return 0, 0, 0, 0
     else
         local days = math.floor(seconds / 86400)
         local hours = math.floor(seconds / 3600) % 24
