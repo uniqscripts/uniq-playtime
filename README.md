@@ -6,8 +6,10 @@ Simple script that will count players play time on server via os.time function. 
 Drag and drop
 
 ## Commands
-- [/mytime](https://prnt.sc/yqN07V74AuTh) - to show your play time on server
-- [/timelist](https://prnt.sc/LAWsFgZode-e) - show leaderboard of all players sorted by highest to lowest
+- [/totaltime](https://prnt.sc/yqN07V74AuTh) - to show your play time on server
+- [/timelist](https://prnt.sc/LAWsFgZode-e) - to show leaderboard of players total time sorted by highest to lowest
+- sessiontime - to show players current session time
+- sessionlist- to show scoreboard list made out by players session time sorted by highest to lowest
 - you can edit in config file command namesgit 
 
 ## Dependency

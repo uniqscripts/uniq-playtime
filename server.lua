@@ -159,6 +159,10 @@ RegisterCommand(cfg.commands.timelist, function(source)
                 }
             end
         end
+            
+        table.sort(options, function(a, b)
+            return a.playtime > b.playtime
+        end)
 
         table.sort(options, function(a, b)
             return a.playtime > b.playtime
