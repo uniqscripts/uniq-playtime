@@ -1,7 +1,9 @@
 Shared = {
     commands = {
-        mytime = 'mytime',
-        timelist = 'timelist'
+        mytime = 'totaltime',
+        timelist = 'timelist',
+        sessiontime = 'sessiontime',
+        sessionlist = 'sessionlist'
     },
     topList = 50, -- how many players will be shown in leaderboard list, for me going over 50 crashed me few times,
     print = true, -- if you dont want server prints for people after they leave disable this
@@ -11,5 +13,6 @@ Shared = {
         [3] = 'Your Play Time',
         [4] = '%s played on server for %.2f sec',
         [5] = 'Top %s',
+        [6] = 'Your session time: %s days %s hours %s min %s sec'
     }
 }

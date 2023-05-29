@@ -59,3 +59,42 @@ RegisterNetEvent('uniq-playtime:list', function(list)
     lib.registerContext(menu)
     lib.showContext(menu.id)
 end)
+
+
+RegisterNetEvent('uniq-playtime:mySessionTime', function(time)
+    local alert = lib.alertDialog({
+        header = Locales[3],
+        content = Locales[6]:format(secondsToClock(time)),
+        centered = true,
+        cancel = true
+    })
+end)
+
+RegisterNetEvent('uniq-playtime:sessionlist', function(list)
+    local options = {}
+    local count = 0
+
+    for k,v in pairs(list) do
+        options[#options + 1] = {
+            title = v.name,
+            time = v.time,
+            description = Locales[2]:format(secondsToClock(v.time)),
+        }
+
+        if count == cfg.topList then
+            break
+        end
+    end
+
+    table.sort(options, function(a, b)
+        return a.time > b.time
+    end)
+
+    lib.registerContext({
+        id = 'uniq_playtime_session_all',
+        title = Locales[5]:format(cfg.topList),
+        options = options
+    })
+
+    lib.showContext('uniq_playtime_session_all')
+end)

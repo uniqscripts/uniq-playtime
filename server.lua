@@ -24,7 +24,6 @@ do
     end
 end
 
-
 AddEventHandler('onResourceStart', function(name)
     if cache.resource == name then
 
@@ -36,13 +35,13 @@ AddEventHandler('onResourceStart', function(name)
 
         if framework == 'esx' then
             for k,v in pairs(ESX.GetExtendedPlayers()) do
-                playTime[v.identifier] = os.time()
+                playTime[v.identifier] = {time = os.time()}
             end
         end
 
         if framework == 'qb' then
             for k,v in pairs(QBCore.Players) do
-                playTime[v.PlayerData.citizenid] = os.time()
+                playTime[v.PlayerData.citizenid] = {time = os.time()}
             end
         end
     end
@@ -52,14 +51,14 @@ CreateThread(function()
     if framework == 'esx' then
         AddEventHandler('esx:playerLoaded', function(playerId, xPlayer)
             local identifier = xPlayer.identifier
-            playTime[identifier] = os.time()
+            playTime[identifier] = {time = os.time()}
         end)
     end
 
     if framework == 'qb' then
         RegisterNetEvent('QBCore:Server:PlayerLoaded', function(xPlayer)
             local identifier = xPlayer.PlayerData.citizenid
-            playTime[identifier] = os.time()
+            playTime[identifier] = {time = os.time()}
         end)
     end
 end)
@@ -96,7 +95,7 @@ RegisterCommand(cfg.commands.mytime, function(source)
         local src = source
         local identifier = ESX.GetPlayerFromId(src).identifier
         local mytime = MySQL.prepare.await(Query.MY_TIME, {identifier})
-        local newTime = (os.time() - playTime[identifier]) + mytime
+        local newTime = (os.time() - playTime[identifier].time) + mytime
         TriggerClientEvent('uniq-playtime:mytime', src, newTime)
     end
 
@@ -104,7 +103,7 @@ RegisterCommand(cfg.commands.mytime, function(source)
         local src = source
         local identifier = QBCore.Functions.GetPlayer(src).PlayerData.citizenid
         local mytime = MySQL.prepare.await(Query.MY_TIME, {identifier})
-        local newTime = (os.time() - playTime[identifier]) + mytime
+        local newTime = (os.time() - playTime[identifier].time) + mytime
         TriggerClientEvent('uniq-playtime:mytime', src, newTime)
     end
 end)
@@ -120,7 +119,7 @@ RegisterCommand(cfg.commands.timelist, function(source)
             local time
 
             if playTime[data.identifier] then
-                time = (os.time() - playTime[data.identifier]) + data.playTime
+                time = (os.time() - playTime[data.identifier].time) + data.playTime
             else
                 time = data.playTime
             end
@@ -131,38 +130,72 @@ RegisterCommand(cfg.commands.timelist, function(source)
             }
         end
 
-        table.sort(options, function(a, b)
-            return a.playtime > b.playtime
-        end)
-        
         TriggerClientEvent('uniq-playtime:list', source, options)
     elseif framework == 'qb' then
         local options = {}
         local data = MySQL.query.await(Query.FETCH_TIMEQB)
-        local info = json.decode(data[1].charinfo)
-        local name = ('%s %s'):format(info.firstname, info.lastname)
-        local time
-
-        if playTime[data[1].citizenid] then
-            time = (os.time() - playTime[data[1].citizenid]) + data[1].playTime
-        else
-            time = data[1].playTime
-        end
 
         for i = 1, #data do
-            local data = data[i]
+            local info = json.decode(data[i].charinfo)
 
-            options[#options + 1] = {
-                name = name,
-                playtime = time
-            }
+            if playTime[data[i].citizenid] then
+                options[#options + 1] = {
+                    name = ('%s %s'):format(info.firstname, info.lastname),
+                    playtime = (os.time() - playTime[data[i].citizenid].time) + data[i].playTime
+                }
+            else
+                options[#options + 1] = {
+                    name = ('%s %s'):format(info.firstname, info.lastname),
+                    playtime = data[i].playTime
+                }
+            end
         end
 
-        table.sort(options, function(a, b)
-            return a.playtime > b.playtime
-        end)
-
         TriggerClientEvent('uniq-playtime:list', source, options)
+    end
+end)
+
+
+RegisterCommand(cfg.commands.sessiontime, function(source)
+    if framework == 'esx' then
+        local identifier = ESX.GetPlayerFromId(source).identifier
+
+        if playTime[identifier] then
+            local time = (os.time() - playTime[identifier].time)
+            TriggerClientEvent('uniq-playtime:mySessionTime', source, time)
+        end
+    elseif framework == 'qb' then
+        local identifier = QBCore.Functions.GetPlayer(source).PlayerData.citizenid
+
+        if playTime[identifier] then
+            local time = (os.time() - playTime[identifier].time)
+            TriggerClientEvent('uniq-playtime:mySessionTime', source, time)
+        end
+    end
+end)
+
+
+RegisterCommand(cfg.commands.sessionlist, function(source)
+    if framework == 'esx' then
+        local newTable = lib.table.deepclone(playTime)
+
+        for k,v in pairs(newTable) do
+            local xPlayer = ESX.GetPlayerFromIdentifier(k)
+            v.name = xPlayer.name
+            v.time = os.time() - v.time
+        end
+
+        TriggerClientEvent('uniq-playtime:sessionlist', source, newTable)
+    elseif framework == 'qb' then
+        local newTable = lib.table.deepclone(playTime)
+
+        for k,v in pairs(newTable) do
+            local xPlayer = QBCore.Functions.GetPlayerByCitizenId(k).PlayerData.charinfo
+            v.name = ('%s %s'):format(xPlayer.firstname, xPlayer.lastname)
+            v.time = os.time() - v.time
+        end
+
+        TriggerClientEvent('uniq-playtime:sessionlist', source, newTable)
     end
 end)
 
@@ -173,7 +206,7 @@ AddEventHandler('onResourceStop', function(name)
         local insertTable = {}
 
         for k,v in pairs(playTime) do
-            insertTable[#insertTable + 1] = {(os.time() - v), k}
+            insertTable[#insertTable + 1] = {(os.time() - v.time), k}
         end
 
         MySQL.prepare(Query.UPDATE_TIME, insertTable)
@@ -192,7 +225,7 @@ AddEventHandler('playerDropped', function(reason)
   
         if identifier then
             if playTime[identifier] then
-                local new_time = os.time() - playTime[identifier]
+                local new_time = os.time() - playTime[identifier].time
                 if cfg.print then
                     print(Locales[4]:format(GetPlayerName(playerId), new_time))
                 end
@@ -207,7 +240,7 @@ AddEventHandler('playerDropped', function(reason)
   
         if identifier then
             if playTime[identifier] then
-                local new_time = os.time() - playTime[identifier]
+                local new_time = os.time() - playTime[identifier].time
                 if cfg.print then
                     print(Locales[4]:format(GetPlayerName(playerId), new_time))
                 end
