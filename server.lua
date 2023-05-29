@@ -119,16 +119,25 @@ RegisterCommand(cfg.commands.timelist, function(source)
             local time
 
             if playTime[data.identifier] then
-                time = (os.time() - playTime[data.identifier].time) + data.playTime
+                --if data.firstname then
+                    options[#options + 1] = {
+                        name = ('%s %s'):format(data.firstname, data.lastname),
+                        playtime = (os.time() - playTime[data.identifier].time) + data.playTime
+                    }
+                --end
             else
-                time = data.playTime
+                --if data.firstname then
+                    options[#options + 1] = {
+                        name = ('%s %s'):format(data.firstname, data.lastname),
+                        playtime = data.playTime
+                    }
+                --end
             end
-
-            options[#options + 1] = {
-                name = ('%s %s'):format(data.firstname, data.lastname),
-                playtime = time
-            }
         end
+
+        table.sort(options, function(a, b)
+            return a.playtime > b.playtime
+        end)
 
         TriggerClientEvent('uniq-playtime:list', source, options)
     elseif framework == 'qb' then
@@ -150,6 +159,10 @@ RegisterCommand(cfg.commands.timelist, function(source)
                 }
             end
         end
+
+        table.sort(options, function(a, b)
+            return a.playtime > b.playtime
+        end)
 
         TriggerClientEvent('uniq-playtime:list', source, options)
     end
@@ -185,6 +198,10 @@ RegisterCommand(cfg.commands.sessionlist, function(source)
             v.time = os.time() - v.time
         end
 
+        table.sort(newTable, function(a, b)
+            return a.time > b.time
+        end)
+
         TriggerClientEvent('uniq-playtime:sessionlist', source, newTable)
     elseif framework == 'qb' then
         local newTable = lib.table.deepclone(playTime)
@@ -194,6 +211,11 @@ RegisterCommand(cfg.commands.sessionlist, function(source)
             v.name = ('%s %s'):format(xPlayer.firstname, xPlayer.lastname)
             v.time = os.time() - v.time
         end
+
+
+        table.sort(newTable, function(a, b)
+            return a.time > b.time
+        end)
 
         TriggerClientEvent('uniq-playtime:sessionlist', source, newTable)
     end
