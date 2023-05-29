@@ -6,13 +6,11 @@ Simple script that will count players play time on server via os.time function. 
 Drag and drop
 
 ## Commands
-- /mytime - to show your play time on server
-- /timelist - show leaderboard of all players sorted by highest to lowest
+- [/mytime](https://prnt.sc/yqN07V74AuTh) - to show your play time on server
+- [/timelist](https://prnt.sc/LAWsFgZode-e) - show leaderboard of all players sorted by highest to lowest
 - you can edit in config file command namesgit 
 
 ## Dependency
 - qb/esx
 - oxmysql
 - ox_lib
-
-# [Showcase](https://streamable.com/7kiuec)
