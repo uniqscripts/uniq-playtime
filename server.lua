@@ -130,6 +130,10 @@ RegisterCommand(cfg.commands.timelist, function(source)
             }
         end
 
+        table.sort(options, function(a, b)
+            return a.playtime > b.playtime
+        end)
+            
         TriggerClientEvent('uniq-playtime:list', source, options)
     elseif framework == 'qb' then
         local options = {}
@@ -150,6 +154,10 @@ RegisterCommand(cfg.commands.timelist, function(source)
                 }
             end
         end
+            
+        table.sort(options, function(a, b)
+            return a.playtime > b.playtime
+        end)
 
         TriggerClientEvent('uniq-playtime:list', source, options)
     end
