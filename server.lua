@@ -276,3 +276,19 @@ AddEventHandler('playerDropped', function(reason)
         end
     end
 end)    
+
+
+
+local function fetchTime(identifier)
+    if type(identifier) == 'string' then
+        if playTime[identifier] then
+            return playTime[identifier]
+        end
+        
+        return false
+    end
+
+    return false
+end
+
+exports('fetchTime', fetchTime)
