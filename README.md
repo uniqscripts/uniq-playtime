@@ -1,5 +1,7 @@
 # uniq-playtime
 
+![Github All Releases](https://img.shields.io/github/downloads/uniqscripts/uniq-playtime/total.svg?logo=github)
+
 Simple script that will count players play time on server via os.time function. Script is for esx/qb and it will automatically determine which one you use, also sql file will be automatically installed.
 
 ## Installation
